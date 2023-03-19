@@ -1,0 +1,80 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+typedef struct studentTag { //구조체 생성
+	char ID[20];
+	char name[10];
+	int mid;
+	int fin;
+}stu;
+
+
+
+int main() {
+	int i = 0, j;
+	int midavg = 0;
+	int finavg = 0;
+	int count = 0;
+	double midvar = 0;
+	double finvar = 0;
+
+	stu* s;
+	s = (stu*)malloc(sizeof(stu) * 40); //동적메모리 할당
+	if (s == NULL) {
+		fprintf(stderr, "메모리가 부족해서 할당할 수 없습니다.\n");
+		exit(1);
+	}
+
+	FILE* fs;
+	fs = fopen("student.txt", "r"); //student 파일 읽기
+
+	for (i = 0; i < 40; i++) { //구조체에 파일 내용 입력
+		if (fscanf(fs, "%s %s %d %d", s[i].ID, s[i].name, &s[i].mid, &s[i].fin) == 4) {
+		}
+		else {
+			break;
+		}
+	
+	}
+	fclose(fs);
+
+	for (j = 0; j < i; j++) {
+		double avg = (s[j].mid + s[j].fin) / 2.0; //학생 개인의 평균 구하기
+		printf("학번: %s 이름: %s 중간: %d 기말: %d 평균: %f\n", s[j].ID, s[j].name, s[j].mid,s[j].fin, avg); //학생정보 출력
+	}
+
+	printf("=============================\n");
+	for (j = 0; j < i; j++) { //학생들 중간 점수 모아서 평균내기
+		midavg += s[j].mid; 
+	}
+	printf("학생들 중간 평균점수: %d\n", midavg / i);
+
+	for (j = 0; j < i; j++) { //학생들 기말 점수 모아서 평균내기
+		finavg += s[j].fin; 
+	}
+	printf("학생들 기말 평균점수: %d\n",finavg / i);
+	printf("=============================\n");
+
+
+	for (j = 0; j < i; j++) { //학생들 중간 점수 모아서 분산 구하기
+		midvar += ((s[j].mid - midavg) * (s[j].mid - midavg)); 
+	}
+	midvar = midvar / i;
+	
+	
+	printf("학생들 중간 표준편차: %f\n", sqrt(midvar));
+
+	for (j = 0; j < i; j++) { //학생들 기말 점수 모아서 분산 구하기
+		finvar += ((s[j].fin - finavg) * (s[j].fin - finavg));
+	}
+	finvar = finvar / i;
+
+	printf("학생들 기말 표준편차: %f\n", sqrt(finvar));
+
+
+	free(s); //동적메모리 해제
+	return 0;
+}
